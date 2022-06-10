@@ -1,5 +1,7 @@
 package com.example.mavenjavafx;
 
+import com.database.DataBaseController;
+import com.database.DataBaseService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class MenuController {
     double x,y;
@@ -83,9 +86,12 @@ public class MenuController {
         stage.show();
     }
 
-    public void exitButton(ActionEvent event){
+    public void exitButton(ActionEvent event) throws SQLException {
         stage = (Stage)button.getScene().getWindow();
         stage.close();
+        DataBaseService dbs = new DataBaseService();
+
+        dbs.removeRoomsMiscellaneous();
     }
 }
 

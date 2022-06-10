@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.timeTable.Event;
 import com.timeTable.algorithm.Edge;
 import com.timeTable.algorithm.ResourcesAlgorithm;
+import com.timeTable.classes.Room;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,6 +30,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static com.database.DataBaseController.dataBaseConnection;
@@ -136,11 +139,11 @@ public class AssignAutomaticallyMiscellaneousController implements Initializable
     void assignMiscellaneous() throws FileNotFoundException, JsonProcessingException, SQLException {
 
         ResourcesAlgorithm resourcesAlgorithm = new ResourcesAlgorithm();
-        Graph<Event, Edge> eventsGraph;
-        eventsGraph = resourcesAlgorithm.startAssignResources();
+        List<Room> newList;
+        newList = resourcesAlgorithm.startAssignResources();
 
         DataBaseService dataBaseAlgorithm = new DataBaseService();
-        dataBaseAlgorithm.addRoomsMiscellaneous(eventsGraph);
+        dataBaseAlgorithm.addRoomsMiscellaneous(newList);
 
     }
 

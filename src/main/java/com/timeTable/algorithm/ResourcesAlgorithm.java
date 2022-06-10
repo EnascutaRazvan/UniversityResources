@@ -1,5 +1,7 @@
 package com.timeTable.algorithm;
 
+import com.database.DataBaseController;
+import com.database.DataBaseService;
 import com.scraper.TimeTableScraper;
 import com.timeTable.Event;
 import com.timeTable.TimeTable;
@@ -10,10 +12,11 @@ import org.jgrapht.Graph;
 import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.util.*;
 
 public class ResourcesAlgorithm {
-        TimeTableScraper scraper = new TimeTableScraper();
+    TimeTableScraper scraper = new TimeTableScraper();
 
     public Graph<Event, Edge> startAssignClasses() throws FileNotFoundException {
         scraper.startScrape();
@@ -31,25 +34,12 @@ public class ResourcesAlgorithm {
 
         distributionOfClassesAlgorithm(roomsAssignedMap,eventsGraph,scraper.listOfRooms);
 
-
         return eventsGraph;
 
     }
-    public Graph<Event, Edge> startAssignResources() throws FileNotFoundException {
+    public List<Room> startAssignResources() throws SQLException {
         scraper.startScrape();
-
-        Graph<Event, Edge> eventsGraph;
-        eventsGraph = addAllVertexes(scraper.listOfTimeTables);
-        addAllEdges(eventsGraph);
-
-
-        Map<List<String>, List<Room>> roomsAssignedMap ;
-        roomsAssignedMap = createAssignedRoomsMap(eventsGraph);
-
-        distributionOfClassesAlgorithm(roomsAssignedMap,eventsGraph,scraper.listOfRooms);
-        distributionOfMiscellaneous(eventsGraph, scraper.listOfRooms);
-
-        return eventsGraph;
+        return distributionOfMiscellaneous(scraper.listOfRooms);
     }
 
     public void printGraph(Graph<Event, Edge> eventsGraph){
@@ -221,7 +211,8 @@ public class ResourcesAlgorithm {
     }
 
 
-    private void distributionOfMiscellaneous(Graph<Event, Edge> eventsGraph, List<Room> allRooms){
+    private List<Room> distributionOfMiscellaneous(List<Room> allRooms) throws SQLException {
+        DataBaseService.selectMiscellaneous();
         Miscellaneous miscellaneous = Miscellaneous.getInstance();
         int nrLecture = 0;
         int nrSeminary = 0;
@@ -234,10 +225,6 @@ public class ResourcesAlgorithm {
             else if(room1.getType().equals(TypeOfRoom.LABORATORY))
                 nrLaboratory++;
         }
-        Miscellaneous.getInstance().setTotalNumberOfChalk(Miscellaneous.getInstance().getTotalNumberOfChalk());
-        Miscellaneous.getInstance().setTotalNumberOfComputers(Miscellaneous.getInstance().getTotalNumberOfComputers());
-        Miscellaneous.getInstance().setTotalNumberOfSponges(Miscellaneous.getInstance().getTotalNumberOfSponges());
-        Miscellaneous.getInstance().setTotalNumberOfVideoProjectors(Miscellaneous.getInstance().getTotalNumberOfVideoProjectors());
 
         int totalNumberOfChalk = miscellaneous.getTotalNumberOfChalk();
         int totalNumberOfSponges = miscellaneous.getTotalNumberOfSponges();
@@ -295,6 +282,7 @@ public class ResourcesAlgorithm {
                 Miscellaneous.getInstance().minusNumberOfComputers(laboratoryDistributionComputers);
             }
         }
+        return allRooms;
     }
 
 

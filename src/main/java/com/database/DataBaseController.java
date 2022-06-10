@@ -1,7 +1,6 @@
 package com.database;
 
 import java.sql.*;
-import java.util.Arrays;
 
 public class DataBaseController {
     public static final DataBaseConnection dataBaseConnection = new DataBaseConnection();
